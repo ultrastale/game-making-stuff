@@ -1,0 +1,291 @@
+import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+
+import acm.program.GraphicsProgram;
+import acm.util.RandomGenerator;
+import acm.graphics.*;
+
+public class EventsPractice extends GraphicsProgram {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	// class constants
+	public static final int APPLET_WIDTH = 500;
+	public static final int APPLET_HEIGHT = 500;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	///////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	// 5/20: constants that represent current direction to move ball
+	private static final int UP = 0;
+	private static final int DOWN = 1;
+	private static final int LEFT = 2;
+	private static final int RIGHT = 3;
+	private static final int NONE = -1;
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	
+	
+	
+	
+	private static final int BALL_SIZE = 30;
+
+	// class fields -- shapes we want to work with when
+	// events occur
+	private GRect square;
+	private GRect square2;
+	
+	private GOval oval;
+	private GOval oval2;
+	
+	private GObject lastClicked;  // will store last clicked object
+	private int clickedX;
+	private int clickedY;
+	
+	// 5/20: going to move a ball across the screen
+	// need more fields -- also called instance variables
+	private GOval ball;
+	
+	
+	
+	//////////////////////////////////////////////////////////////////////////////////////////
+	
+	private int direction = NONE; // will save value of constant representing last arrow press
+	
+	
+	///////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void init() {
+		// set size of window
+		setSize(APPLET_WIDTH, APPLET_HEIGHT);
+		
+		// listen for mouse events
+		addMouseListeners();
+		
+		// 5/20:  listen for key presses
+		addKeyListeners();
+	}
+	
+	public void run() {
+		// create some objects and add them to the applet window
+		
+		// squares
+		square = makeASquare(100, 100, 100, Color.BLUE);
+		square2 = makeASquare(200, 210, 100, Color.RED);
+		
+		// circles
+		oval = makeACircle(300, 100, 100, Color.YELLOW);
+		oval2 = makeACircle(100, 400, 100, Color.GREEN);
+		
+		add(square);
+		add(square2);
+		add(oval);
+		add(oval2);
+		
+		// 5/20: add a moving ball
+		ball = new GOval(APPLET_WIDTH/2 - BALL_SIZE/2, APPLET_HEIGHT/2 - BALL_SIZE/2, BALL_SIZE, BALL_SIZE);
+		ball.setFilled(true);
+		ball.setFillColor(Color.magenta);
+		add(ball);
+		
+		int dx = -2, dy = -3;
+		
+		while(true) {
+			// TODO: move in direction
+			// ball.move(10, 0)
+			
+			// // // // // // // // // // // // // // // // // / // // // // // // / // // // / // // / // / / // 
+			
+			if (direction == UP) {
+				ball.move(0, -10); // use constant instead of magic number
+				// clear the value of direction if you want it to only move with one button press
+				//direction = NONE;
+			} else if (direction == DOWN) {
+				ball.move(0, 10); // use constant instead of magic number
+				// clear the value of direction if you want it to only move with one button press
+				//direction = NONE;
+			} else if (direction == RIGHT) {
+				ball.move(10, 0); // use constant instead of magic number
+				// clear the value of direction if you want it to only move with one button press
+				//direction = NONE;
+			} else if (direction == LEFT) {
+				ball.move(-10, 0); // use constant instead of magic number
+				// clear the value of direction if you want it to only move with one button press
+				//direction = NONE;
+			}
+			
+			
+			
+			// // // // // // // // // // // // // // // // // / // // // // // // / // // // / // // / // / / //
+			
+			double x = checkHorizontal();
+			double y = checkVertical();
+			
+			ball.setLocation(x,y);
+			
+			
+			///////////////////////////////////////// collision detection 
+			GRectangle bounds = ball.getBounds();
+			GRectangle ovalBounds = oval.getBounds();
+			
+			if (bounds.intersection(ovalBounds)) {
+				break;
+				
+			}
+			
+			
+			
+			
+			pause(20);
+			
+			//direction = NONE;
+		}
+	}
+	
+	private double checkHorizontal() {
+		if (ball.getX() + ball.getWidth() < 0) return APPLET_WIDTH;
+		else if (ball.getX() > APPLET_WIDTH) return -(ball.getWidth());
+		return ball.getX();
+	}
+	
+	private double checkVertical() {	
+		if (ball.getY() + ball.getHeight() < 0) return APPLET_HEIGHT;
+		else if (ball.getY() > APPLET_HEIGHT) return -(ball.getHeight());
+		return ball.getY();
+	}
+
+	
+	/* mousePressed method is triggered when mouse down event 
+	 * occurs.
+	 */
+	public void mousePressed(MouseEvent event) {
+		int x = event.getX();
+		int y = event.getY();
+		
+		// what did we click on?
+		GObject clicked = lastClicked = getElementAt(x,y);
+		lastClicked = clicked;
+		
+		// if we have an object
+		if (clicked != null) {
+			// find out which object we have
+			if (clicked instanceof GRect) {
+				// we got a square -- change it to pink
+				((GRect)clicked).setFillColor(Color.PINK);
+			} else if (clicked instanceof GOval) {
+				// we got a circle -- change it to orange
+				GOval oval = (GOval)clicked;
+				oval.setFillColor(Color.orange);
+				//oval.move(0, -10);
+			}
+			
+			
+			clickedX =  x - (int)clicked.getX();
+			clickedY = y - (int)clicked.getY();
+			
+			
+			// TODO: find the difference between the click point and the (x,y) of the object that was clicked
+			
+		}
+	}
+	
+	/* mouseReleased method is called when the mouse button 
+	 * is released.
+	 */
+	public void mouseReleased(MouseEvent event) {
+		// if we have an object
+		if (lastClicked != null) {
+			// find out which object we have
+			if (lastClicked instanceof GRect) {
+				// we got a square -- change it to pink
+				((GRect)lastClicked).setFillColor(Color.BLUE);
+			} else if (lastClicked instanceof GOval) {
+				// we got a circle -- change it to orange
+				GOval oval = (GOval)lastClicked;
+				oval.setFillColor(Color.GREEN);
+				oval.move(0, 10);
+			}
+		}
+		lastClicked = null; // erase previous value of field
+	}
+	
+	/* mouseDragged is called each time the mouse is moved
+	 * while the button is held down.
+	 */
+	public void mouseDragged(MouseEvent event) {
+		
+		if (lastClicked == null) return;
+		
+		// current location of mouse
+		int x = event.getX();
+		int y = event.getY();
+		
+		
+		
+		// TODO:  adjust for difference of original click point from object's (x,y) location
+		x -= clickedX;
+		y -= clickedY;
+		
+		lastClicked.setLocation(x,y);
+		
+	}
+	
+	
+	// // // // // // // // // // // // // // // // // / // // // // // // / // // // / // // / // / / // 
+	// method that gets called when key is pressed
+	public void KeyPressed(KeyEvent event) {
+		
+		int keyClicked = event.getKeyCode(); // will tell what key on the keyboard is pressed
+		
+		switch (keyClicked) {
+		
+		case KeyEvent.VK_UP:
+			direction = UP;
+			break;
+		case KeyEvent.VK_DOWN:
+			direction = DOWN;
+			break;
+		case KeyEvent.VK_RIGHT:
+			direction = RIGHT;
+			break;
+		case KeyEvent.VK_LEFT:
+			direction = LEFT;
+			break;
+		}
+		
+		System.out.println(direction);
+		System.out.println(direction);
+		
+	}
+	
+	// // // // // // // // // // // // // // // // // / // // // // // // / // // // / // // / // / / // 
+	
+	/* creates a square graphical object and returns it */
+	private GRect makeASquare(int x, int y, int size, Color color) {
+		GRect rect = new GRect(x, y, size, size);
+		rect.setFillColor(color);
+		rect.setFilled(true);
+		
+		return rect;
+	}
+	
+	/* creates a circle graphical object and returns it */
+	private GOval makeACircle(int x, int y, int size, Color color) {
+		GOval circle = new GOval(x, y, size, size);
+		circle.setFillColor(color);
+		circle.setFilled(true);
+		
+		return circle;
+	}
+}
