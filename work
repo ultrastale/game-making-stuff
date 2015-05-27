@@ -1,0 +1,169 @@
+import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.util.*;
+import acm.graphics.*;
+import acm.program.*;
+
+
+
+
+
+public class gameCreation extends GraphicsProgram{
+
+
+	// window size constants 
+	public static final int APPLET_WIDTH = 500;
+	public static final int APPLET_HEIGHT = 500;
+
+	// constants for keyboard presses
+	private static final int UP = 0;
+	private static final int DOWN = 1;
+	private static final int LEFT = 2;
+	private static final int RIGHT = 3;
+	private static final int NONE = -1;
+
+	private int direction = NONE; // will save value of constant representing last arrow press
+
+	int scorePoint = 0;
+
+	GImage sanic;
+	GImage tyson;
+	
+	GLabel score;
+
+	
+
+	public void init() {
+		setSize(APPLET_WIDTH, APPLET_HEIGHT);
+		setBackground(Color.yellow);
+		addMouseListeners();
+		addKeyListeners();
+
+		
+		score = new GLabel("Score: " + scorePoint);
+		//score.setLabel("Score: " +  scorePoint);
+		score.setFont("SanSerif-BOLD-30");
+		score.setColor(Color.blue);
+		add(score, 2, 26); //position at upper left corner of window
+	}
+
+	public void run() {
+		
+		
+		// main character
+		GImage sanic = new GImage("sanic.png");
+		sanic.scale(.09, .06);
+		add(sanic, APPLET_WIDTH/2 - sanic.getWidth()/2, APPLET_HEIGHT/2);
+		
+		
+		// enimes 
+		GImage tyson = new GImage("tyson.gif");
+		tyson.scale(1,.5);
+		add(tyson, tyson.getWidth(), tyson.getHeight());
+		
+		GImage tyson2 = new GImage("tyson2.gif");
+		tyson2.scale(1,.55);
+		add(tyson2, APPLET_WIDTH - tyson2.getWidth()*2, tyson.getHeight());
+		
+		
+		
+		while (true){
+			
+			//collision
+			GRectangle tysonBounds = tyson.getBounds();
+			GRectangle sanicBounds = sanic.getBounds();
+			GRectangle tysonBounds2 = tyson2.getBounds();
+			
+			if (sanicBounds.intersects(tysonBounds) == true || sanicBounds.intersects(tysonBounds2) == true)	{
+				//direction = NONE;
+				System.out.println("hit");
+				System.out.println("test hit");
+				scorePoint++;
+				System.out.println(scorePoint);
+				score.setLabel("Score: " + scorePoint);
+			}
+			
+
+			
+			
+			
+			
+			
+			// Movement for sanic
+			if (direction == UP) {
+				sanic.move(0, -10);
+				//direction = NONE;
+			} else if (direction == DOWN) {
+				sanic.move(0, 10);
+				//direction = NONE;
+			} else if (direction == LEFT) {
+				sanic.move(-10, 0);
+				//direction = NONE;
+			} else if (direction == RIGHT) {
+				sanic.move(10, 0);
+				//direction = NONE;
+				
+			}
+			
+			
+			pause(15);
+			
+			if (sanic.getX() > APPLET_WIDTH - sanic.getWidth() || sanic.getX() < 0) {
+				direction = NONE;
+				GLabel gameOver = new GLabel("You suck, GG  Score: " + scorePoint);
+				add(gameOver, APPLET_WIDTH/2 - gameOver.getWidth(), APPLET_HEIGHT/2);
+				break;
+			} else if (sanic.getY() > APPLET_WIDTH - sanic.getHeight() || sanic.getY() < 0) {
+				direction = NONE;
+				GLabel gameOver = new GLabel("You suck, GG  Score: " + scorePoint);
+				add(gameOver, APPLET_WIDTH/2 - gameOver.getWidth(), APPLET_HEIGHT/2);
+				break;
+			}
+			
+			
+			
+			
+			
+			
+		}
+			
+				
+			
+			
+			
+
+		
+		
+	}
+	
+	
+
+	public void keyPressed(KeyEvent event) {
+
+			int keyClicked = event.getKeyCode();
+
+			switch (keyClicked) {
+			case KeyEvent.VK_UP:
+				direction = UP;
+				break;
+			case KeyEvent.VK_DOWN:
+				direction = DOWN;
+				break;
+			case KeyEvent.VK_LEFT:
+				direction = LEFT;
+				break;
+			case KeyEvent.VK_RIGHT:
+				direction = RIGHT;
+				break;
+			case KeyEvent.VK_SPACE:
+				direction = NONE;
+				break;
+			}
+
+
+
+		}
+
+
+
+	}
