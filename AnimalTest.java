@@ -12,10 +12,11 @@ public class AnimalTest extends GraphicsProgram{
 		System.out.println("Name: " + buffalo.getValue());
 		
 		add(buffalo.getImage());
-		Animal.foo(); // static method call
+		System.out.println(Animal.getNumAnimals()); // static method call
 		
 		
 		
 	}
 
 }
+
