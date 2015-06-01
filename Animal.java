@@ -32,6 +32,8 @@ public class Animal {
 
 		// call setter for image field
 		setImage(fileName);
+		
+		addAnimal(); // static method call
 	}
 	
 	// second parameterized constructor
@@ -42,13 +44,19 @@ public class Animal {
 		setImage(fileName);
 		setHabitat("Unspecified");
 		
+		addAnimal(); // static method call
 		
 	}
 	
 	
 	// setter for the class variable
-	public static void foo() {
-		
+	public static void addAnimal() {
+		numAnimals++;
+	}
+	
+	// getter for the class variable
+	public static int getNumAnimals() {
+		return numAnimals;
 	}
 	
 	
@@ -92,7 +100,9 @@ public class Animal {
 	}
 	
 	
-	
-	
+	// overriding the default toString() method
+	public String toString() {
+		return "Name: " + this.getName() + "\nHabitat: " + this.getHabitat() + "\nValue: " + this.getValue();
+	}
 	
 }
