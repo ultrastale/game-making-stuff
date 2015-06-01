@@ -14,9 +14,10 @@ public class AnimalTest extends GraphicsProgram{
 		add(buffalo.getImage());
 		System.out.println(Animal.getNumAnimals()); // static method call
 		
-		
+		System.out.println(buffalo);
 		
 	}
 
 }
+
 
